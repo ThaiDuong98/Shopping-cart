@@ -4,22 +4,24 @@ import ProductList from "./ProductList";
 import data from './data';
 import './bootstrap/bootstrap.min.css';
 
+
 function App() {
   
   const [products, setProducts] = useState(data)
   const [cart, setCart] = useState([])
   const [total, setTotal] = useState(0)
   const [countProduct, setCountProduct] = useState(0)
-  
 
-  const handleAddProduct = (product) => {
-    //debugger
-    const newCart = [...cart]
-    const checkExistId = newCart.findIndex(item => item.id === product.id)
+  //process add product to cart
+  const handleAddProduct = (product) => {   
+    const newCarts = [...cart]
+    const checkExistId = newCarts.findIndex(item => item.id === product.id)
     if(checkExistId >= 0){
      // const updateNumberOfProduct = {...product, quantity: product.quantity++}
-      newCart[checkExistId] = {...product, quantity: product.quantity++}
-      setCart(newCart)
+      const updateCart = {...newCarts[checkExistId]}
+      updateCart.quantity++
+      newCarts[checkExistId] = updateCart
+      setCart(newCarts)
     }else{
       setCart(pre => {
         const addNewProductToCart = [...pre, product]
@@ -28,22 +30,61 @@ function App() {
     }    
   }   
 
- 
+ //process delete product in cart
   const hadleDeleteCart = (item) => {
     const newCart = [...cart]
     const result = newCart.filter(cart => cart.id !== item.id)
     setCart(result)
   }
 
+  //process calculate the total price of the cart
   useEffect(() => {
     if(cart){
         var result = 0
         for(let i=0; i < cart.length; i++){
-            result += cart[i].price
+            result += cart[i].price*cart[i].quantity
         }
     }
     setTotal(result)
   }, [cart])
+
+  //Check the total number of products in the cart
+  useEffect(() => {
+    if(cart){     
+      const result = cart.reduce((total, item) => {
+        return total + item.quantity
+      }, 0)
+      setCountProduct(result)
+    }
+  }, [cart])
+
+  //process Increase number of product in cart
+  const onIncreaseNumberOfProduct = (item) => {
+    const newCarts = [...cart]
+    const checkExistId = newCarts.findIndex(cart => cart.id === item.id)
+    if(checkExistId >=0){
+      const updateIncreaseNumber = {...newCarts[checkExistId]}
+      updateIncreaseNumber.quantity++
+      newCarts[checkExistId] = updateIncreaseNumber
+      setCart(newCarts)
+    }
+  }
+  
+  //process Decrease number of product in cart
+  const onDecreaseNumberOfProduct = (item) => {
+    const newCarts = [...cart]
+    const checkExistId = newCarts.findIndex(cart => cart.id === item.id)
+    if(checkExistId >=0){
+      const updateDecreaseNumber = {...newCarts[checkExistId]}
+      if(updateDecreaseNumber.quantity === 1){
+        return
+      }else{
+        updateDecreaseNumber.quantity--
+        newCarts[checkExistId] = updateDecreaseNumber
+        setCart(newCarts)
+      }
+    }
+  }
 
   
 
@@ -55,8 +96,12 @@ function App() {
           cart={cart}
           total={total}
           hadleDeleteCart={hadleDeleteCart}
+          onIncrease = {onIncreaseNumberOfProduct}
+          onDecrease = {onDecreaseNumberOfProduct}
+          countProduct = {countProduct}
         />
-        <hr/>
+        <br/>
+        <br/>
         <ProductList 
           products={products}
           handleAddProduct={handleAddProduct}

@@ -1,24 +1,16 @@
-import { useState } from "react";
-
 const ProductList = ({products, handleAddProduct}) => {
-    const [count, setCount] = useState(0)
 
     const onAddProduct = (e, product) => {
         e.preventDefault()
         if(handleAddProduct){
             handleAddProduct(product)
         }
-
-        setCount(prev => {
-            return prev + 1
-        })
     }
 
     return (
         <>
             <div className="wrapper">
                 <div className="container">
-                    {count}
                     <div className="row g-1">
                         {products && products.map(product => (
                             <div className="col-md-3" key={product.id}>

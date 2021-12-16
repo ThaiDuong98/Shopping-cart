@@ -1,7 +1,4 @@
-import { useState, useEffect } from "react"
-
-const CartList = ({cart, hadleDeleteCart, total}) => {
-
+const CartList = ({cart, hadleDeleteCart, total, onIncrease, onDecrease, countProduct}) => {
 
     const onDeleteCart = (item) => {
        if(hadleDeleteCart){
@@ -9,13 +6,22 @@ const CartList = ({cart, hadleDeleteCart, total}) => {
        }
     }
 
+    const onIncreaseNumber = (item) => {
+        if(onIncrease){
+            onIncrease(item)
+        }
+    }
 
-
+    const onDecreaseNmber = (item) => {
+        if(onDecrease){
+            onDecrease(item)
+        }
+    }
 
     return (
         <>
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                View Cart
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style={{float: "right"}}>
+                <span>{countProduct ? `(${countProduct})` : ''}</span>  View Cart
             </button>
 
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog">
@@ -45,9 +51,9 @@ const CartList = ({cart, hadleDeleteCart, total}) => {
                                         <td>{new Intl.NumberFormat().format(`${item.price}`)} VNĐ</td>
                                         <td className="qty">
                                             <p>
-                                                <button type="button" className="btn btn-primary btn-sm">-</button>
+                                                <button type="button" className="btn btn-primary btn-sm" onClick={() => onDecreaseNmber(item)}>-</button>
                                                     {item.quantity}
-                                                <button type="button" className="btn btn-primary btn-sm">+</button>
+                                                <button type="button" className="btn btn-primary btn-sm" onClick={() => onIncreaseNumber(item)}>+</button>
                                             </p>                      
                                         </td>
                                         <td>{new Intl.NumberFormat().format(`${item.quantity * item.price}`)} VNĐ</td>
